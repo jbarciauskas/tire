@@ -156,6 +156,5 @@ namespace :tire do
       end
       puts ""
     end
-
   end
 end
