@@ -129,7 +129,32 @@ namespace :tire do
       puts ""
 
     end
+    
+    desc full_comment
+    task :create do
+
+      if ENV['CLASS'].to_s == ''
+        puts '='*90, 'USAGE', '='*90, full_comment, ""
+        exit(1)
+      end
+
+      klass  = eval(ENV['CLASS'].to_s)
+      params = eval(ENV['PARAMS'].to_s) || {}
+
+      index = Tire::Index.new( ENV['INDEX'] || klass.tire.index.name )
+
+      if ENV['FORCE']
+        puts "[IMPORT] Deleting index '#{index.name}'"
+        index.delete
+      end
+
+      unless index.exists?
+        mapping = defined?(Yajl) ? Yajl::Encoder.encode(klass.tire.mapping_to_hash, :pretty => true) :
+                                  MultiJson.encode(klass.tire.mapping_to_hash)
+        puts "[IMPORT] Creating index '#{index.name}' with mapping:", mapping
+        index.create :mappings => klass.tire.mapping_to_hash, :settings => klass.tire.settings
+      end
+      puts ""
+    end
 
   end
-
-end
