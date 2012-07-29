@@ -158,3 +158,4 @@ namespace :tire do
     end
 
   end
+end
